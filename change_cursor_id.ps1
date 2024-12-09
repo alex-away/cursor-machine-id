@@ -1,4 +1,6 @@
 # Cursor Device ID Changer for Windows
+# PowerShell adaptation of the original macOS script
+# Original source: https://github.com/fly8888/cursor_machine_id
 # PowerShell script to modify Cursor editor's device ID
 
 # Configuration file path
