@@ -1,5 +1,8 @@
 # Cursor Device ID Changer for Windows
 
+## Origin
+Original macOS version: [GitHub - fly8888/cursor_machine_id](https://github.com/fly8888/cursor_machine_id)
+
 ## Overview
 This PowerShell script allows you to change the device ID for the Cursor editor on Windows systems. It's useful when you need to reset your device identification, such as when experiencing account locking issues.
 
@@ -49,11 +52,19 @@ Default configuration file path:
 ## Execution Policy
 If you encounter a security warning, you may need to adjust the PowerShell execution policy:
 
-1. Open PowerShell as Administrator
-2. Run:
-```powershell
-Set-ExecutionPolicy RemoteSigned
-```
+
+1. **Unlock the Script**:
+   - Right-click on the script file (`change_cursor_id.ps1`).
+   - Select **Properties**.
+   - Check if there is an "Unlock" button or checkbox in the **General** tab.
+   - Click "Unlock" to remove the restriction.
+
+2. **Adjust Execution Policy**:
+   - Open PowerShell as Administrator.
+   - Run:
+     ```powershell
+     Set-ExecutionPolicy RemoteSigned
+     ```
 
 ## Disclaimer
 This script is provided for educational and troubleshooting purposes. Use at your own risk. It may potentially violate Cursor's terms of service.
