@@ -6,15 +6,16 @@
 # Configuration file path
 $STORAGE_FILE = "$env:APPDATA\Cursor\User\globalStorage\storage.json"
 
-# Function to generate a random ID
+# Function to generate a random hex ID (64 characters)
 function Generate-RandomId {
-    return -join ((48..57) + (97..102) | Get-Random -Count 64 | % {[char]$_})
+    $uuid1 = [guid]::NewGuid().ToString("N")
+    $uuid2 = [guid]::NewGuid().ToString("N")
+    return $uuid1 + $uuid2
 }
 
-# Check if a custom ID is provided as an argument
-$NEW_ID = $args[0]
-if (-not $NEW_ID) {
-    $NEW_ID = Generate-RandomId
+# Function to generate a UUID
+function Generate-UUID {
+    return [guid]::NewGuid().ToString()
 }
 
 # Function to create a backup of the storage file
@@ -26,10 +27,17 @@ function Backup-StorageFile {
     }
 }
 
+# Check if Cursor is running
+$cursorProcess = Get-Process "Cursor" -ErrorAction SilentlyContinue
+if ($cursorProcess) {
+    Write-Host "Please close Cursor editor before running this script." -ForegroundColor Red
+    exit 1
+}
+
 # Ensure the directory exists
 $storageDir = Split-Path -Parent $STORAGE_FILE
 if (-not (Test-Path $storageDir)) {
-    New-Item -ItemType Directory -Path $storageDir | Out-Null
+    New-Item -ItemType Directory -Path $storageDir -Force | Out-Null
 }
 
 # Create an empty JSON file if it doesn't exist
@@ -37,21 +45,35 @@ if (-not (Test-Path $STORAGE_FILE)) {
     '{}' | Out-File -FilePath $STORAGE_FILE -Encoding UTF8
 }
 
-# Backup the existing file
-Backup-StorageFile
+try {
+    # Backup the existing file
+    Backup-StorageFile
 
-# Read the current JSON content
-$jsonContent = Get-Content $STORAGE_FILE -Raw | ConvertFrom-Json
+    # Generate new IDs
+    $machineId = Generate-RandomId
+    $macMachineId = Generate-RandomId
+    $devDeviceId = Generate-UUID
+    $sqmId = "{$(Generate-UUID)}".ToUpper()
 
-# Update the machine ID
-$jsonContent.'telemetry.machineId' = $NEW_ID
+    # Read the current JSON content
+    $jsonContent = Get-Content $STORAGE_FILE -Raw | ConvertFrom-Json
+    if (-not $jsonContent) { $jsonContent = [PSCustomObject]@{} }
 
-# Save the updated JSON
-$jsonContent | ConvertTo-Json -Depth 10 | Set-Content $STORAGE_FILE -Encoding UTF8
+    # Update all telemetry IDs
+    $jsonContent.'telemetry.machineId' = $machineId
+    $jsonContent.'telemetry.macMachineId' = $macMachineId
+    $jsonContent.'telemetry.devDeviceId' = $devDeviceId
+    $jsonContent.'telemetry.sqmId' = $sqmId
 
-Write-Host "Successfully changed machineId to: $NEW_ID"
+    # Save the updated JSON
+    $jsonContent | ConvertTo-Json -Depth 10 | Set-Content $STORAGE_FILE -Encoding UTF8
 
-# Provide usage instructions
-Write-Host "`nUsage:"
-Write-Host "  .\change_cursor_id.ps1           # Generate random ID"
-Write-Host "  .\change_cursor_id.ps1 custom_id # Use custom ID"
+    Write-Host "`nSuccessfully updated device IDs:"
+    Write-Host "machineId: $machineId"
+    Write-Host "macMachineId: $macMachineId"
+    Write-Host "devDeviceId: $devDeviceId"
+    Write-Host "sqmId: $sqmId"
+} catch {
+    Write-Host "Error: $_" -ForegroundColor Red
+    exit 1
+}
