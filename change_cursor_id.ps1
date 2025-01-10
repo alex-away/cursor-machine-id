@@ -6,15 +6,23 @@
 # Configuration file path
 $STORAGE_FILE = "$env:APPDATA\Cursor\User\globalStorage\storage.json"
 
-# Function to generate a random hex ID (64 characters)
-function Generate-RandomId {
-    $uuid1 = [guid]::NewGuid().ToString("N")
-    $uuid2 = [guid]::NewGuid().ToString("N")
-    return $uuid1 + $uuid2
+# Function to generate hex ID using RNGCryptoServiceProvider (40-character hex)
+function Generate-CryptoRandomHex {
+    $bytes = New-Object Byte[] 32
+    $rng = New-Object Security.Cryptography.RNGCryptoServiceProvider
+    $rng.GetBytes($bytes)
+    $rng.Dispose()
+    return -join ($bytes | ForEach-Object { $_.ToString('x2') })
 }
 
-# Function to generate a UUID
-function Generate-UUID {
+# Function to generate UUID with braces
+function Generate-BracedUUID {
+    $guid = [guid]::NewGuid()
+    return "{$($guid.ToString().ToUpper())}"
+}
+
+# Function to generate standard UUID
+function Generate-StandardUUID {
     return [guid]::NewGuid().ToString()
 }
 
@@ -49,11 +57,11 @@ try {
     # Backup the existing file
     Backup-StorageFile
 
-    # Generate new IDs
-    $machineId = Generate-RandomId
-    $macMachineId = Generate-RandomId
-    $devDeviceId = Generate-UUID
-    $sqmId = "{$(Generate-UUID)}".ToUpper()
+    # Generate new IDs using the same logic as the original script
+    $machineId = Generate-CryptoRandomHex
+    $macMachineId = Generate-CryptoRandomHex
+    $sqmId = Generate-BracedUUID
+    $devDeviceId = Generate-StandardUUID
 
     # Read the current JSON content
     $jsonContent = Get-Content $STORAGE_FILE -Raw | ConvertFrom-Json
