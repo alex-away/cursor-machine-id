@@ -4,14 +4,18 @@
 Original macOS version: [GitHub - fly8888/cursor_machine_id](https://github.com/fly8888/cursor_machine_id)
 
 ## Overview
-This PowerShell script allows you to change the device ID for the Cursor editor on Windows systems. It's useful when you need to reset your device identification, such as when experiencing account locking issues.
+This PowerShell script allows you to change the device ID for the Cursor editor on Windows systems. It's particularly useful when experiencing account locking issues or when you need to reset your device identification.
 
 ## Features
-- Automatically generate a new random device ID
-- Create an automatic backup of the original configuration file
-- Support for custom device ID input
-- Uses native PowerShell capabilities
-- No additional dependencies required
+- ✨ Automatically generate new random device IDs
+- 💾 Create automatic backups of the original configuration file
+- 🛠️ Updates all telemetry identifiers:
+  - machineId
+  - macMachineId
+  - devDeviceId
+  - sqmId
+- 🔒 Safety checks to ensure Cursor is closed before modifications
+- 📦 No additional dependencies required
 
 ## Prerequisites
 - Windows operating system
@@ -23,25 +27,21 @@ This PowerShell script allows you to change the device ID for the Cursor editor 
 2. (Optional) Place the script in a convenient location
 
 ## Usage
+Open PowerShell and navigate to the script's directory, then run:
 
-### Running the Script
-Open PowerShell and navigate to the script's directory, then use one of these methods:
-
-#### Method 1: Generate Random ID
 ```powershell
 .\change_cursor_id.ps1
 ```
 
-#### Method 2: Use Custom ID
-```powershell
-.\change_cursor_id.ps1 your_custom_id
-```
-
-### Important Notes
-- Ensure Cursor editor is closed before running the script
-- The script creates a backup of the original configuration file
-- Backup files are saved with a timestamp in the same directory
-- Backup filename format: `storage.json.backup_YYYYMMDD_HHMMSS`
+## Important Notes
+- ⚠️ If issues persist after reset, try:
+  1. Deleting your account
+  2. Resetting device ID
+  3. Restarting Cursor
+  4. Creating a new account
+- The script automatically creates timestamped backups
+- Backup format: `storage.json.backup_YYYYMMDD_HHMMSS`
+- Ensure Cursor is completely closed before running
 
 ## Configuration File Location
 Default configuration file path:
@@ -50,27 +50,24 @@ Default configuration file path:
 ```
 
 ## Execution Policy
-If you encounter a security warning, you may need to adjust the PowerShell execution policy:
-
+If you encounter a security warning, adjust the PowerShell execution policy:
 
 1. **Unlock the Script**:
-   - Right-click on the script file (`change_cursor_id.ps1`).
-   - Select **Properties**.
-   - Check if there is an "Unlock" button or checkbox in the **General** tab.
-   - Click "Unlock" to remove the restriction.
+   - Right-click on the script file
+   - Select **Properties**
+   - Check for an "Unlock" button in the **General** tab
+   - Click "Unlock" to remove restrictions
 
 2. **Adjust Execution Policy**:
-   - Open PowerShell as Administrator.
-   - Run:
-     ```powershell
-     Set-ExecutionPolicy RemoteSigned
-     ```
+   ```powershell
+   Set-ExecutionPolicy RemoteSigned
+   ```
 
 ## Disclaimer
-This script is provided for educational and troubleshooting purposes. Use at your own risk. It may potentially violate Cursor's terms of service.
+This script is provided for troubleshooting purposes. Use at your own risk.
 
 ## License
-MIT License - Feel free to modify and distribute
+MIT License
 
 ## Support
 No official support provided. Use at your own discretion.
